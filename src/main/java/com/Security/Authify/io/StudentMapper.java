@@ -1,16 +1,20 @@
 package com.Security.Authify.io;
 
+import com.Security.Authify.custom.CustomGenerator;
 import com.Security.Authify.entity.StudentEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
+@RequiredArgsConstructor
 public class StudentMapper {
+
+    private final CustomGenerator customGenerator;
 
     public StudentEntity convertToStuEntity(StudentRequest request){
         return StudentEntity.builder()
-                .stdId(UUID.randomUUID().toString())
+                .stdId(customGenerator.generateUniqueId())
+                .username(customGenerator.generateUniqueName(request.getFirstName(), request.getRollNo()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .rollNo(request.getRollNo())
@@ -24,6 +28,7 @@ public class StudentMapper {
                 .rollNo(response.getRollNo())
                 .gender(response.getGender())
                 .stdId(response.getStdId())
+                .username(response.getUsername())
                 .id(response.getId())
                 .build();
     }

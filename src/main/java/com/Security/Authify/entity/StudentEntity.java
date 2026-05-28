@@ -17,13 +17,15 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StudentEntity {
+public class StudentEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     private String stdId;
+    @Column(unique = true)
+    private String username;
     private String firstName;
     private String lastName;
     @Column(unique = true)
@@ -31,11 +33,4 @@ public class StudentEntity {
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
-
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp createdAt;
-    @UpdateTimestamp
-    private Timestamp updatedAt;
 }

@@ -23,6 +23,12 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public StudentResponse createStudent(StudentRequest student) {
         StudentEntity stu = studentMapper.convertToStuEntity(student);
+        if(studentRepo.existsByStdId(stu.getStdId())){
+            throw new RuntimeException("Student ID already exists");
+        }
+        if(studentRepo.existsByUsername(stu.getUsername())){
+            throw new RuntimeException("Username already exists");
+        }
         stu = studentRepo.save(stu);
         log.info("Student saved in DB");
         return studentMapper.convertToStdResponse(stu);
@@ -37,15 +43,15 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public StudentResponse getStudentById(Long id) {
-        StudentEntity stuById = studentRepo.findById(id)
+    public StudentResponse getStudentById(String stdId) {
+        StudentEntity stuById = studentRepo.findByStdId(stdId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
         return studentMapper.convertToStdResponse(stuById);
     }
 
     @Override
-    public StudentResponse updateStudent(StudentRequest student, Long id) {
-        StudentEntity stud = studentRepo.findById(id)
+    public StudentResponse updateStudent(StudentRequest student, String stdId) {
+        StudentEntity stud = studentRepo.findByStdId(stdId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
         stud.setFirstName(student.getFirstName());
         stud.setLastName(student.getLastName());
@@ -56,10 +62,10 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public void deleteStudent(Long id) {
-        studentRepo.findById(id)
+    public void deleteStudent(String stdId) {
+        StudentEntity student = studentRepo.findByStdId(stdId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-        studentRepo.deleteById(id);
+        studentRepo.delete(student);
         log.info("Student deleted from DB");
     }
 

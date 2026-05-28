@@ -43,33 +43,33 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/getStudentById/{id}")
+    @GetMapping("/getStudentByStdId/{stdId}")
     @PreAuthorize("hasAuthority('STUDENT_READ')")
-    public ResponseEntity<StudentResponse> getStudentById(@PathVariable Long id){
+    public ResponseEntity<StudentResponse> getStudentById(@PathVariable String stdId){
         try{
-            StudentResponse response = studentService.getStudentById(id);
+            StudentResponse response = studentService.getStudentById(stdId);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e){
             throw new RuntimeException("Failed to get student by id :" +e.getMessage());
         }
     }
 
-    @PutMapping("/updateStudent/{id}")
+    @PutMapping("/updateStudent/{stdId}")
     @PreAuthorize("hasAuthority('STUDENT_UPDATE')")
-    public ResponseEntity<StudentResponse> updateStudent(@Valid @RequestBody StudentRequest student, @PathVariable Long id){
+    public ResponseEntity<StudentResponse> updateStudent(@Valid @RequestBody StudentRequest student, @PathVariable String stdId){
         try{
-            StudentResponse response = studentService.updateStudent(student, id);
+            StudentResponse response = studentService.updateStudent(student, stdId);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e){
             throw new RuntimeException("Failed to update student :" +e.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteStudent/{id}")
+    @DeleteMapping("/deleteStudent/{stdId}")
     @PreAuthorize("hasAuthority('STUDENT_DELETE')")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long id){
+    public ResponseEntity<String> deleteStudent(@PathVariable String stdId){
         try{
-            studentService.deleteStudent(id);
+            studentService.deleteStudent(stdId);
             return ResponseEntity.status(HttpStatus.OK).body("Student deleted successfully");
         }catch (Exception e){
             throw new RuntimeException("Failed to delete student :" +e.getMessage());

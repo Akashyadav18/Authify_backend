@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class StudentResponse {
     private Long id;
     private String stdId;
+    private String username;
     private String fullName;
     private String rollNo;
     private GenderEnum gender;
