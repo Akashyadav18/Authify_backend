@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
-@EnableJpaAuditing(auditorAwareRef = "auditorAware")  // ← yahan lagao
+@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class JpaConfig {
     // kuch nahi chahiye andar, sirf annotation kaam karega
 }

@@ -1,16 +1,21 @@
 package com.Security.Authify.io;
 
+import com.Security.Authify.custom.CustomGenerator;
 import com.Security.Authify.entity.TeacherEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.UUID;
 
 @Configuration
+@RequiredArgsConstructor
 public class TeacherMapper {
+
+    private final CustomGenerator customGenerator;
 
     public TeacherEntity convertToTeacherEntity(TeacherRequest request){
         return TeacherEntity.builder()
-                .teacherId(UUID.randomUUID().toString())
+                .teacherId(customGenerator.generateUniqueId())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
@@ -28,6 +33,8 @@ public class TeacherMapper {
                 .experienceYear(entity.getExperienceYear())
                 .qualification(entity.getQualification())
                 .gender(entity.getGender())
+                .phoneNumber(entity.getPhoneNumber())
+                .createdBy(entity.getCreatedBy())
                 .build();
     }
 }

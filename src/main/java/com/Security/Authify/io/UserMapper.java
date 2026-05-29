@@ -1,5 +1,6 @@
 package com.Security.Authify.io;
 
+import com.Security.Authify.custom.CustomGenerator;
 import com.Security.Authify.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,11 +13,12 @@ import java.util.UUID;
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
+    private final CustomGenerator customGenerator;
 
     public UserEntity convertToUserEntity(ProfileRequest request) {
         return UserEntity.builder()
                 .email(request.getEmail())
-                .userId(UUID.randomUUID().toString())
+                .userId(customGenerator.generateUniqueId())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .isAccountVerified(false)

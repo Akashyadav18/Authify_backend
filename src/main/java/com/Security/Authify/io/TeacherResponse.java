@@ -16,5 +16,7 @@ public class TeacherResponse {
     private String fullName;
     private int experienceYear;
     private String qualification;
+    private String phoneNumber;
     private GenderEnum gender;
+    private String createdBy;
 }

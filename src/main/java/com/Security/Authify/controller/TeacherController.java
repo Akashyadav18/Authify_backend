@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,12 +56,14 @@ public class TeacherController {
 
     @PutMapping("/updateTeacher/{id}")
     @PreAuthorize("hasAuthority('TEACHER_UPDATE')")
-    public ResponseEntity<TeacherResponse> updateTeacher(@Valid @PathVariable Long id, @RequestBody TeacherRequest request){
+    public ResponseEntity<TeacherResponse> updateTeacher(@Valid @PathVariable Long id, @RequestBody TeacherRequest request, @CurrentSecurityContext(expression = "authentication?.name") String email){
         try{
-            TeacherResponse res = teacherService.updateTeacher(id, request);
+            TeacherResponse res = teacherService.updateTeacher(id, request, email);
             return ResponseEntity.status(HttpStatus.OK).body(res);
-        } catch (Exception e) {
-            throw new RuntimeException("Fail to Update Teacher"+ e.getMessage());
+        }catch (AccessDeniedException e) {
+            throw e;
+        }catch(Exception e) {
+            throw new RuntimeException("Fail to Update Teacher :" + e.getMessage());
         }
     }
 

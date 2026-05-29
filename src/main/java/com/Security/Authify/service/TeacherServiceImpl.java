@@ -6,6 +6,7 @@ import com.Security.Authify.io.TeacherRequest;
 import com.Security.Authify.io.TeacherResponse;
 import com.Security.Authify.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,9 +41,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public TeacherResponse updateTeacher(Long id, TeacherRequest request) {
+    public TeacherResponse updateTeacher(Long id, TeacherRequest request, String email) {
         TeacherEntity teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taecher Not Found! "));
+                .orElseThrow(() -> new RuntimeException("Teacher Not Found! "+id));
+        if(!teacher.getCreatedBy().equals(email)){
+            throw new AccessDeniedException(" you do not have permission to update teacher");
+        }
         teacher.setFirstName(request.getFirstName());
         teacher.setLastName(request.getLastName());
         teacher.setPhoneNumber(request.getPhoneNumber());

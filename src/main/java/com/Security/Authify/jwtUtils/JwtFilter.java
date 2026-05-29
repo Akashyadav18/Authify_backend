@@ -61,7 +61,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if (token != null) {
             email = jwtUtil.extractEmail(token);
             if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                //loadUserbyusername- auth credentials ko verify karne k baad userEntity object load/return karta hai
                 UserDetails userDetails = appUserDetailService.loadUserByUsername(email);
+                //DB se UserEntity aata hai
                 Claims claims = jwtUtil.verifySignatureAndExtractAllClaims(token);
 
                 Role role = Role.valueOf("ROLE_"+ claims.get("Role", String.class));
@@ -73,9 +75,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 });
                 if(jwtUtil.validateToken(token, userDetails)){
                     UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, simpleGrantedAuthorities);
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, // ← YAHAN store hota hai — yahi getPrincipal() deta hai
+                                    null,
+                                    simpleGrantedAuthorities);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken); // Ab poori app mein kahi se bhi nikal sakte ho
                 }
             }
         }

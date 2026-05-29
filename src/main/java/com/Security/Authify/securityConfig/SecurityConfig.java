@@ -1,5 +1,6 @@
 package com.Security.Authify.securityConfig;
 
+import com.Security.Authify.exception.CustomAccessDeniedHandler;
 import com.Security.Authify.exception.CustomAuthEntryPoint;
 import com.Security.Authify.jwtUtils.JwtFilter;
 import com.Security.Authify.service.AppUserDetailService;
@@ -17,6 +18,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -34,21 +37,23 @@ public class SecurityConfig {
     private final AppUserDetailService appUserDetailService;
     private final JwtFilter jwtFilter;
     private final CustomAuthEntryPoint customAuthEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
-    public SecurityFilterChain auth(HttpSecurity http){
+    public SecurityFilterChain auth(HttpSecurity http, AccessDeniedHandler accessDeniedHandler){
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/send-reset-otp", "/api/auth/reset-password", "/api/auth/send-otp-verify-email", "/api/auth/verify-email")
+                        auth.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/send-reset-otp", "/api/auth/reset-password", "/api/auth/send-otp-verify-email", "/api/auth/verify-email", "/error")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(logout -> logout.disable())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthEntryPoint));
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthEntryPoint))
+                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler));
 
         return http.build();
     }

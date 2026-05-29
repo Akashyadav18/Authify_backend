@@ -14,7 +14,8 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(auth -> auth.isAuthenticated() && !(auth.getPrincipal() instanceof String)) // skip "anonymousUser"
                 .map(auth -> {
-                    User user = (User) auth.getPrincipal();
+//                    User user = (User) auth.getPrincipal();// this will only return username, role
+                    User user = (User) auth.getPrincipal(); // this return all values from userEntity class
                     return user.getUsername(); // or user.getUsername() or user.getId()
                 });
     }

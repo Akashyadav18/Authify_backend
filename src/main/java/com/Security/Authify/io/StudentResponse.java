@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,4 +19,8 @@ public class StudentResponse {
     private String fullName;
     private String rollNo;
     private GenderEnum gender;
+    private String createdBy;
+    private String updatedBy;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

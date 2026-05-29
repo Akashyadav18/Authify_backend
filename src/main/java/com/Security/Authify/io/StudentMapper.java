@@ -30,6 +30,10 @@ public class StudentMapper {
                 .stdId(response.getStdId())
                 .username(response.getUsername())
                 .id(response.getId())
+                .createdBy(response.getCreatedBy())
+                .updatedBy(response.getUpdatedBy())
+                .createdAt(response.getCreatedAt())
+                .updatedAt(response.getUpdatedAt())
                 .build();
     }
 }
