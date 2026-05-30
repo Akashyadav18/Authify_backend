@@ -26,6 +26,6 @@ public class AuthUtil {
     }
 
     public boolean isAdmin(){
-        return getCurrentuser().getRole().name().equals("ADMIN");
+        return getCurrentuser().getRole().name().equals("ROLE_ADMIN");
     }
 }
