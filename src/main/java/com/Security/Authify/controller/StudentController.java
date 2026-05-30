@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +61,10 @@ public class StudentController {
         try{
             StudentResponse response = studentService.updateStudent(student, stdId);
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch (Exception e){
+        }catch (AccessDeniedException e){
+            throw e;
+        }
+        catch (Exception e){
             throw new RuntimeException("Failed to update student :" +e.getMessage());
         }
     }
@@ -71,7 +75,10 @@ public class StudentController {
         try{
             studentService.deleteStudent(stdId);
             return ResponseEntity.status(HttpStatus.OK).body("Student deleted successfully");
-        }catch (Exception e){
+        }catch (AccessDeniedException e){
+            throw e;
+        }
+        catch (Exception e){
             throw new RuntimeException("Failed to delete student :" +e.getMessage());
         }
     }

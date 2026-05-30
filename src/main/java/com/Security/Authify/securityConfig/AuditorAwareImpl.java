@@ -1,5 +1,6 @@
 package com.Security.Authify.securityConfig;
 
+import com.Security.Authify.entity.UserEntity;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -15,8 +16,8 @@ public class AuditorAwareImpl implements AuditorAware<String> {
                 .filter(auth -> auth.isAuthenticated() && !(auth.getPrincipal() instanceof String)) // skip "anonymousUser"
                 .map(auth -> {
 //                    User user = (User) auth.getPrincipal();// this will only return username, role
-                    User user = (User) auth.getPrincipal(); // this return all values from userEntity class
-                    return user.getUsername(); // or user.getUsername() or user.getId()
+                    UserEntity user = (UserEntity) auth.getPrincipal(); // this return all values from userEntity class
+                    return user.getUserId(); // or user.getUsername() or user.getId()
                 });
     }
 }
