@@ -41,12 +41,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public TeacherResponse updateTeacher(Long id, TeacherRequest request, String email) {
+    public TeacherResponse updateTeacher(Long id, TeacherRequest request) {
         TeacherEntity teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Teacher Not Found! "+id));
-        if(!teacher.getCreatedBy().equals(email)){
-            throw new AccessDeniedException(" you do not have permission to update teacher");
-        }
         teacher.setFirstName(request.getFirstName());
         teacher.setLastName(request.getLastName());
         teacher.setPhoneNumber(request.getPhoneNumber());

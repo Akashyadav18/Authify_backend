@@ -56,9 +56,9 @@ public class TeacherController {
 
     @PutMapping("/updateTeacher/{id}")
     @PreAuthorize("hasAuthority('TEACHER_UPDATE')")
-    public ResponseEntity<TeacherResponse> updateTeacher(@Valid @PathVariable Long id, @RequestBody TeacherRequest request, @CurrentSecurityContext(expression = "authentication?.name") String email){
+    public ResponseEntity<TeacherResponse> updateTeacher(@Valid @PathVariable Long id, @RequestBody TeacherRequest request){
         try{
-            TeacherResponse res = teacherService.updateTeacher(id, request, email);
+            TeacherResponse res = teacherService.updateTeacher(id, request);
             return ResponseEntity.status(HttpStatus.OK).body(res);
         }catch (AccessDeniedException e) {
             throw e;

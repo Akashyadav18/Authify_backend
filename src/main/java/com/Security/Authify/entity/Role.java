@@ -9,7 +9,7 @@ public enum Role {
     )),
     ROLE_TEACHER(Set.of(
             Permission.STUDENT_READ,Permission.STUDENT_CREATE,Permission.STUDENT_UPDATE,Permission.STUDENT_DELETE,
-            Permission.TEACHER_READ, Permission.TEACHER_UPDATE
+            Permission.TEACHER_READ
     )),
     ROLE_USER(Set.of(
             Permission.STUDENT_READ
