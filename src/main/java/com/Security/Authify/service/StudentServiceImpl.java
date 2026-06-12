@@ -1,13 +1,19 @@
 package com.Security.Authify.service;
 
 import com.Security.Authify.entity.StudentEntity;
+import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.StudentMapper;
 import com.Security.Authify.io.StudentRequest;
 import com.Security.Authify.io.StudentResponse;
 import com.Security.Authify.jwtUtils.AuthUtil;
 import com.Security.Authify.repository.StudentRepository;
+import com.Security.Authify.specification.StudentSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +32,20 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public StudentResponse createStudent(StudentRequest student) {
         StudentEntity stu = studentMapper.convertToStuEntity(student);
-        if(studentRepo.existsByStdId(stu.getStdId())){
-            throw new RuntimeException("Student ID already exists");
-        }
-        if(studentRepo.existsByUsername(stu.getUsername())){
-            throw new RuntimeException("Username already exists");
-        }
         stu = studentRepo.save(stu);
         log.info("Student saved in DB");
         return studentMapper.convertToStdResponse(stu);
     }
 
     @Override
-    public List<StudentResponse> getAllStudent() {
-        return studentRepo.findAll()
-                .stream()
-                .map(studentMapper::convertToStdResponse)
-                .toList();
+    public PaginatedResponse<StudentResponse> getAllStudent(Pageable pageable, String search) {
+        Specification<StudentEntity> spec = StudentSpecification.getSpecification(search);
+            Page<StudentEntity> stuPage = studentRepo.findAll(spec, pageable);
+            List<StudentResponse> studentList = stuPage.getContent()
+                    .stream()
+                    .map(studentMapper::convertToStdResponse)
+                    .toList();
+            return PaginatedResponse.of(studentList, stuPage);
     }
 
     @Override

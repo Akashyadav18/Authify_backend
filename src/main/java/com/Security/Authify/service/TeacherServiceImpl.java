@@ -1,14 +1,21 @@
 package com.Security.Authify.service;
 
 import com.Security.Authify.entity.TeacherEntity;
+import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.TeacherMapper;
 import com.Security.Authify.io.TeacherRequest;
 import com.Security.Authify.io.TeacherResponse;
 import com.Security.Authify.repository.TeacherRepository;
+import com.Security.Authify.specification.TeacherSpecification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,11 +33,18 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<TeacherResponse> getAllTeachers() {
-        return teacherRepository.findAll()
+    public PaginatedResponse<TeacherResponse> getAllTeachers(int pageNo, int pageSize, String sortBy, String sortDir, Long id, String name, String qualification, Date startDate, Date endDate) {
+        Sort sort = sortDir.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Specification<TeacherEntity> spec = TeacherSpecification.teachSpecification(id, name, qualification, startDate, endDate);
+        Page<TeacherEntity> teachPage = teacherRepository.findAll(spec, pageable);
+        List<TeacherResponse> teacherList = teachPage.getContent()
                 .stream()
                 .map(teacherMapper::convertToTeacherResponse)
                 .toList();
+        return PaginatedResponse.of(teacherList, teachPage);
     }
 
     @Override

@@ -15,7 +15,8 @@ public class ProfileRequest {
 
     @NotBlank(message = "Name should not be empty")
     private String name;
-    @Email(message = "Email should be valid")
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$",
+            message = "Invalid email format")
     @NotNull(message = "Email should not be empty")
     private String email;
     @Size(min = 6, message = "Password should be at least 6 characters long")

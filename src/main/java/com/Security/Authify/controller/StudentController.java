@@ -1,18 +1,24 @@
 package com.Security.Authify.controller;
 
+import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.StudentRequest;
 import com.Security.Authify.io.StudentResponse;
 import com.Security.Authify.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController()
 @RequestMapping("/api")
@@ -35,9 +41,21 @@ public class StudentController {
 
     @GetMapping("/getAllStudents")
     @PreAuthorize("hasAuthority('STUDENT_READ')")
-    public ResponseEntity<List<StudentResponse>> getAllStudent(){
+    public ResponseEntity<PaginatedResponse<StudentResponse>> getAllStudent(
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search
+    ){
         try{
-            List<StudentResponse> response = studentService.getAllStudent();
+            Sort sort = null;
+            if(sortDir.equalsIgnoreCase("asc")){
+                sort = Sort.by(sortBy).ascending();
+            }else{
+                sort = Sort.by(sortBy).descending();
+            }
+            PaginatedResponse<StudentResponse> response = studentService.getAllStudent(PageRequest.of(pageNo-1, pageSize, sort), search);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e){
             throw new RuntimeException("Failed to get all students :" +e.getMessage());

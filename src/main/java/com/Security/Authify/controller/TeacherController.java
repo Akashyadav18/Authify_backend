@@ -1,10 +1,12 @@
 package com.Security.Authify.controller;
 
+import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.TeacherRequest;
 import com.Security.Authify.io.TeacherResponse;
 import com.Security.Authify.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -34,9 +37,19 @@ public class TeacherController {
 
     @GetMapping("/getAllTeachers")
     @PreAuthorize("hasAuthority('TEACHER_READ')")
-    public ResponseEntity<List<TeacherResponse>> getAllTeacher(){
+    public ResponseEntity<PaginatedResponse<TeacherResponse>> getAllTeacher(
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "ASC") String sortDir,
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String qualification,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate
+            ){
         try{
-            List<TeacherResponse> res = teacherService.getAllTeachers();
+            PaginatedResponse<TeacherResponse> res = teacherService.getAllTeachers(pageNo-1, pageSize, sortBy, sortDir, id, name, qualification, startDate, endDate);
             return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch(Exception e){
             throw new RuntimeException("Fail to Get All Teachers"+ e.getMessage());

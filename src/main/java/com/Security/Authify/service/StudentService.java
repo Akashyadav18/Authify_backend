@@ -1,7 +1,10 @@
 package com.Security.Authify.service;
 
+import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.StudentRequest;
 import com.Security.Authify.io.StudentResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -9,7 +12,7 @@ public interface StudentService {
 
     StudentResponse createStudent(StudentRequest student);
 
-    List<StudentResponse> getAllStudent();
+    PaginatedResponse<StudentResponse> getAllStudent(Pageable pageable, String search);
 
     StudentResponse getStudentById(String stdId);
 
