@@ -3,6 +3,7 @@ package com.Security.Authify.controller;
 import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.StudentRequest;
 import com.Security.Authify.io.StudentResponse;
+import com.Security.Authify.io.cursorPageResponse;
 import com.Security.Authify.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,20 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e){
             throw new RuntimeException("Failed to get all students :" +e.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllStudentsCursor")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<cursorPageResponse<StudentResponse>> getAllStudentsCursor(
+            @RequestParam( required = false ) Long cursor,
+            @RequestParam(required = false, defaultValue = "10") int size
+    ){
+        try{
+            cursorPageResponse<StudentResponse> response = studentService.getAllStudentsCursor(cursor, size);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e){
+            throw new RuntimeException("Failed to get all students cursor :"+e.getMessage());
         }
     }
 

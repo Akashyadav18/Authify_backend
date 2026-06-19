@@ -1,10 +1,7 @@
 package com.Security.Authify.service;
 
 import com.Security.Authify.entity.StudentEntity;
-import com.Security.Authify.io.PaginatedResponse;
-import com.Security.Authify.io.StudentMapper;
-import com.Security.Authify.io.StudentRequest;
-import com.Security.Authify.io.StudentResponse;
+import com.Security.Authify.io.*;
 import com.Security.Authify.jwtUtils.AuthUtil;
 import com.Security.Authify.repository.StudentRepository;
 import com.Security.Authify.specification.StudentSpecification;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +44,19 @@ public class StudentServiceImpl implements StudentService{
                     .map(studentMapper::convertToStdResponse)
                     .toList();
             return PaginatedResponse.of(studentList, stuPage);
+    }
+
+    @Override
+    public cursorPageResponse<StudentResponse> getAllStudentsCursor(Long cursor, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        List<StudentEntity> stuEntity = studentRepo.fetchNextPage(cursor, pageable);
+        List<StudentResponse> studentList = stuEntity.stream()
+                .map(studentMapper::convertToStdResponse)
+                .collect(Collectors.toList());
+        boolean hasNext = studentList.size() == size;
+        Long nextCursor = hasNext ? studentList.get(size - 1).getId() : null;
+
+        return new cursorPageResponse<>(studentList, size, nextCursor, hasNext);
     }
 
     @Override

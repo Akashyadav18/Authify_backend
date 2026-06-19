@@ -1,10 +1,7 @@
 package com.Security.Authify.service;
 
 import com.Security.Authify.entity.TeacherEntity;
-import com.Security.Authify.io.PaginatedResponse;
-import com.Security.Authify.io.TeacherMapper;
-import com.Security.Authify.io.TeacherRequest;
-import com.Security.Authify.io.TeacherResponse;
+import com.Security.Authify.io.*;
 import com.Security.Authify.repository.TeacherRepository;
 import com.Security.Authify.specification.TeacherSpecification;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +43,21 @@ public class TeacherServiceImpl implements TeacherService {
                 .map(teacherMapper::convertToTeacherResponse)
                 .toList();
         return PaginatedResponse.of(teacherList, teachPage);
+    }
+
+    public cursorPageResponse<TeacherResponse> getAllTeachersCursor(Long cursor, int size) {
+//        default page =0, size=10 [0-9]
+        Pageable pageable = PageRequest.of(0, size);
+//        fetch next page records
+        List<TeacherEntity> teacherEntity = teacherRepository.fetchNextPage(cursor, pageable);
+        List<TeacherResponse> teacherList = teacherEntity.stream()
+                .map(teacherMapper::convertToTeacherResponse)
+                .collect(Collectors.toList());
+//        check if have more records
+        boolean hasNext = teacherList.size() == size;
+        Long nextCursor = hasNext ? teacherList.get(size - 1).getId() : null;
+        
+        return new cursorPageResponse<>(teacherList, size, nextCursor, hasNext);
     }
 
     @Override

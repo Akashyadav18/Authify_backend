@@ -34,6 +34,7 @@ public class TeacherMapper {
                 .qualification(entity.getQualification())
                 .gender(entity.getGender())
                 .phoneNumber(entity.getPhoneNumber())
+                .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .build();
     }

@@ -1,8 +1,10 @@
 package com.Security.Authify.controller;
 
+import com.Security.Authify.entity.TeacherEntity;
 import com.Security.Authify.io.PaginatedResponse;
 import com.Security.Authify.io.TeacherRequest;
 import com.Security.Authify.io.TeacherResponse;
+import com.Security.Authify.io.cursorPageResponse;
 import com.Security.Authify.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,19 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch(Exception e){
             throw new RuntimeException("Fail to Get All Teachers"+ e.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllTeachersCursor")
+    @PreAuthorize("hasAuthority('TEACHER_READ')")
+    public ResponseEntity<cursorPageResponse<TeacherResponse>> getAllTeachersCursor(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+        try{
+            cursorPageResponse<TeacherResponse> allTeachersCursor = teacherService.getAllTeachersCursor(cursor, size);
+            return ResponseEntity.status(HttpStatus.OK).body(allTeachersCursor);
+        } catch(Exception e){
+            throw new RuntimeException("Fail to Get All Teachers Cursor"+ e.getMessage());
         }
     }
 
