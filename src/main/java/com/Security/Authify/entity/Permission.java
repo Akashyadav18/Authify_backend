@@ -1,12 +1,20 @@
 package com.Security.Authify.entity;
 
-public enum Permission {
-    STUDENT_READ,
-    STUDENT_CREATE,
-    STUDENT_UPDATE,
-    STUDENT_DELETE,
-    TEACHER_READ,
-    TEACHER_CREATE,
-    TEACHER_UPDATE,
-    TEACHER_DELETE
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Permission {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true, nullable = false)
+    private String name;
 }

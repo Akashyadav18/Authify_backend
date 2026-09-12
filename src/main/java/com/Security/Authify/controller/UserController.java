@@ -47,22 +47,18 @@ public class UserController {
    @PostMapping("/login")
    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest){
         try{
+//jab user login(userName & password) karta hai -> authenticationManager -> UsernamePasswordAuthenticationToken ko call karta h
+//UsernamePasswordAuthenticationToken -> DaoAuthenticationProvider -> UserDetailsService -> appUserDetailService.loadUserByUsername(userName) -> DB se userName and pass load hota h
+//ab raw pass + encrypted pass compare hota hai -> Authentication obj create hota h(usme principle + role)
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getEmail(),
                             authRequest.getPassword()
                     )
             );
-            UserDetails userDetails = appUserDetailService.loadUserByUsername(authRequest.getEmail());
+            UserDetails userDetails =(UserDetails) authenticate.getPrincipal();
             if(authenticate.isAuthenticated()) {
-                String role = authenticate
-                        .getAuthorities()
-                        .iterator()
-                        .next()
-                        .getAuthority()
-                        //we should always use prefix ROLE_ . This should be use when we want to inform spring security about the role. But don't add when passing in JWT
-                        .replace("ROLE_", "");
-                String jwtToken = jwtUtil.generateToken(userDetails, role);
+                String jwtToken = jwtUtil.generateToken(userDetails);
                 ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
                         .httpOnly(true)
                         .path("/")

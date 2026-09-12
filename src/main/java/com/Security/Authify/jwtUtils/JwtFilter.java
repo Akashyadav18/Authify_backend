@@ -61,25 +61,17 @@ public class JwtFilter extends OncePerRequestFilter {
         if (token != null) {
             email = jwtUtil.extractEmail(token);
             if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                //loadUserbyusername- auth credentials ko verify karne k baad userEntity object load/return karta hai
+                //1. loadUserbyusername- auth credentials ko verify karne k baad userEntity object load/return karta hai
                 UserDetails userDetails = appUserDetailService.loadUserByUsername(email);
-                //DB se UserEntity aata hai
-                Claims claims = jwtUtil.verifySignatureAndExtractAllClaims(token);
-
-                Role role = Role.valueOf("ROLE_"+ claims.get("Role", String.class));
-
-                List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>(List.of(new SimpleGrantedAuthority(role.name())));
-
-                role.getPermissions().forEach(permission -> {
-                    simpleGrantedAuthorities.add(new SimpleGrantedAuthority(permission.name()));
-                });
                 if(jwtUtil.validateToken(token, userDetails)){
+                    //6. Authentication Object create karta hai
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, // ← YAHAN store hota hai — yahi getPrincipal() deta hai
-                                    null,
-                                    simpleGrantedAuthorities);
+                                    null,           // Password(credentials) null hai
+                                    userDetails.getAuthorities()); // Permissions add karta hai
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    //7. AuthenticationToken ko SecurityContext mein set karta hai
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken); // Ab poori app mein kahi se bhi nikal sakte ho
                 }
             }

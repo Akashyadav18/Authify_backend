@@ -1,9 +1,13 @@
 package com.Security.Authify.jwtUtils;
 
+import com.Security.Authify.entity.ERole;
+import com.Security.Authify.entity.Role;
 import com.Security.Authify.entity.UserEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 public class AuthUtil {
@@ -21,11 +25,14 @@ public class AuthUtil {
         return getCurrentuser().getUserId();
     }
 
-    public String getCurrentUserRole(){
-        return getCurrentuser().getRole().name();
+    public Set<Role> getCurrentUserRole(){
+        return getCurrentuser().getRoles();
     }
 
     public boolean isAdmin(){
-        return getCurrentuser().getRole().name().equals("ROLE_ADMIN");
+        return getCurrentuser().getRoles()
+                .stream()
+                .anyMatch(role -> role.getName() == ERole.ADMIN);
+
     }
 }

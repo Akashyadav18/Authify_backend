@@ -1,27 +1,31 @@
 package com.Security.Authify.entity;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.HashSet;
 import java.util.Set;
 
-public enum Role {
-    ROLE_ADMIN(Set.of(
-            Permission.STUDENT_READ, Permission.STUDENT_CREATE, Permission.STUDENT_UPDATE, Permission.STUDENT_DELETE,
-            Permission.TEACHER_READ, Permission.TEACHER_CREATE, Permission.TEACHER_UPDATE, Permission.TEACHER_DELETE
-    )),
-    ROLE_TEACHER(Set.of(
-            Permission.STUDENT_READ,Permission.STUDENT_CREATE,Permission.STUDENT_UPDATE,Permission.STUDENT_DELETE,
-            Permission.TEACHER_READ
-    )),
-    ROLE_USER(Set.of(
-            Permission.STUDENT_READ
-    ));
-
-
-    private final Set<Permission> permissions;
-
-    Role(Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Enumerated(EnumType.STRING)
+    @Column(unique = true, nullable = false)
+    private ERole name;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "roles_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions = new HashSet<>();
 }
