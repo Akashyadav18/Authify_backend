@@ -1,9 +1,13 @@
 package com.Security.Authify.service;
 
+import com.Security.Authify.entity.AccountStatus;
+import com.Security.Authify.entity.ERole;
+import com.Security.Authify.entity.Role;
 import com.Security.Authify.entity.UserEntity;
 import com.Security.Authify.io.ProfileRequest;
 import com.Security.Authify.io.ProfileResponse;
 import com.Security.Authify.io.UserMapper;
+import com.Security.Authify.repository.RoleRepository;
 import com.Security.Authify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,10 +28,15 @@ public class UserServiceImpl implements UserService{
     private final UserMapper userMapper;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Override
     public ProfileResponse createProfile(ProfileRequest request) {
+        Role studentRole = roleRepository.findByName(ERole.STUDENT)
+                .orElseThrow(() -> new RuntimeException("Student Role not found"));
         UserEntity newProfile = userMapper.convertToUserEntity(request);
+        newProfile.setRoles(Set.of(studentRole));
+        newProfile.setStatus(AccountStatus.PENDING);
         newProfile = userRepository.save(newProfile);
         return userMapper.convertToProfileResponse(newProfile);
     }

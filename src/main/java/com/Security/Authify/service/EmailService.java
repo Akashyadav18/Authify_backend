@@ -42,4 +42,22 @@ public class EmailService {
         msg.setText("Your OTP is: " + otp + "\nUse this otp to verify your email\n\nThis OTP will expire in 10 minutes.");
         mailSender.send(msg);
     }
+
+    public void approvalAcceptedEmailMsg(String toEmail, String name){
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(fromEmail);
+        msg.setTo(toEmail);
+        msg.setSubject("Approval Accepted");
+        msg.setText("Hello "+name+" Your account has been approved. \\n Now u can login. \\n\\nRegards, \\n welcome to Authify!\"");
+        mailSender.send(msg);
+    }
+
+    public void approvalRejectedEmailMsg(String toEmail, String name){
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(fromEmail);
+        msg.setTo(toEmail);
+        msg.setSubject("Approval Rejected");
+        msg.setText("Hello "+name+" Your account has been rejected. \\n for more info contact Authify team \\n\\nRegards, \\n welcome to Authify!\"");
+        mailSender.send(msg);
+    }
 }

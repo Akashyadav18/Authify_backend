@@ -20,8 +20,8 @@ public class UserMapper {
     private final RoleRepository roleRepo;
 
     public UserEntity convertToUserEntity(ProfileRequest request) {
-        Role role = roleRepo.findByName(request.getRole())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+//        Role role = roleRepo.findByName(request.getRole())
+//                .orElseThrow(() -> new RuntimeException("Role not found"));
         return UserEntity.builder()
                 .email(request.getEmail())
                 .userId(customGenerator.generateUniqueId())
@@ -32,7 +32,7 @@ public class UserMapper {
                 .verifyOtp(null)
                 .verifyOtpExpiryAt(0L)
                 .resetOtp(null)
-                .roles(Set.of(role))
+//                .roles(Set.of(role))
                 .build();
     }
 

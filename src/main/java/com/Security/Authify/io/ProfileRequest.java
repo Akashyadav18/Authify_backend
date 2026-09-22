@@ -22,6 +22,6 @@ public class ProfileRequest {
     private String email;
     @Size(min = 6, message = "Password should be at least 6 characters long")
     private String password;
-    @NotNull(message = "Role should not be empty")
-    private ERole role;
+//    @NotNull(message = "Role should not be empty")
+//    private ERole role;
 }

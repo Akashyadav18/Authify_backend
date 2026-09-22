@@ -45,6 +45,10 @@ public class UserEntity implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AccountStatus status = AccountStatus.PENDING;
+
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
@@ -67,5 +71,10 @@ public class UserEntity implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.status == AccountStatus.APPROVED;
     }
 }
