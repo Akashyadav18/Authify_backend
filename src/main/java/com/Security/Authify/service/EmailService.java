@@ -1,5 +1,7 @@
 package com.Security.Authify.service;
 
+import com.Security.Authify.entity.ERole;
+import com.Security.Authify.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -58,6 +60,15 @@ public class EmailService {
         msg.setTo(toEmail);
         msg.setSubject("Approval Rejected");
         msg.setText("Hello "+name+" Your account has been rejected. \\n for more info contact Authify team \\n\\nRegards, \\n welcome to Authify!\"");
+        mailSender.send(msg);
+    }
+
+    public void invitationEmail(String email, String url, String admin, ERole role){
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(fromEmail);
+        msg.setTo(email);
+        msg.setSubject("Invitation to join Authify");
+        msg.setText("Hello, \n\nYou have been invited to join Authify as a " + role + " by " + admin + ". \n\nPlease click the link below to accept the invitation: \n\n" + url +" \n\nRegards, \n welcome to Authify!");
         mailSender.send(msg);
     }
 }

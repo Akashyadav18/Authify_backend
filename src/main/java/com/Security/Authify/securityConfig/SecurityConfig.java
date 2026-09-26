@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/send-reset-otp", "/api/auth/reset-password", "/api/auth/send-otp-verify-email", "/api/auth/verify-email", "/error")
+                        auth.requestMatchers("/api/auth/**", "/error")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )

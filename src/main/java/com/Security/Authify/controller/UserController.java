@@ -140,7 +140,7 @@ public class UserController {
             userService.verifyEmailOtp(email, request.get("otp").toString());
             return ResponseEntity.status(HttpStatus.OK).body("Email Verified Successfully");
         } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new RuntimeException("Failed to verify email :"+e.getMessage());
         }
    }
 }

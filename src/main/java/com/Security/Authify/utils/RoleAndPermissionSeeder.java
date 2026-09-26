@@ -6,21 +6,18 @@ import com.Security.Authify.entity.Role;
 import com.Security.Authify.repository.PermissionRepository;
 import com.Security.Authify.repository.RoleRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class RoleAndPermissionSeeder {
+
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
-    public RoleAndPermissionSeeder(
-            RoleRepository roleRepository,
-            PermissionRepository permissionRepository
-    ) {
-        this.roleRepository = roleRepository;
-        this.permissionRepository = permissionRepository;
-    }
+
     @PostConstruct
     public void seedRolesAndPermissions() {
         // Avoid duplicate seeding
@@ -35,12 +32,14 @@ public class RoleAndPermissionSeeder {
         Permission teacherCreate = permissionRepository.save( new Permission(null, "TEACHER_CREATE") );
         Permission teacherUpdate = permissionRepository.save( new Permission(null, "TEACHER_UPDATE") );
         Permission teacherDelete = permissionRepository.save( new Permission(null, "TEACHER_DELETE") );
+        Permission inviteUser = permissionRepository.save( new Permission(null, "INVITE_USER") );
 
         // Create ADMIN role with all permissions
         Role admin = new Role();
         admin.setName(ERole.ADMIN);
         admin.setPermissions(
-                Set.of( studentRead, studentCreate, studentUpdate, studentDelete, teacherRead, teacherCreate, teacherUpdate, teacherDelete
+                Set.of( studentRead, studentCreate, studentUpdate, studentDelete, teacherRead, teacherCreate,
+                        teacherUpdate, teacherDelete, inviteUser
                 ));
         roleRepository.save(admin);
 
