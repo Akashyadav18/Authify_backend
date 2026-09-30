@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -40,6 +41,7 @@ public class InvitationServiceImpl implements InvitationService {
 
     //Admin invite user
     @Override
+    @Transactional
     public void inviteUser(String email, ERole roleName) {
         if(userRepository.findByEmail(email).isPresent()){
             throw new RuntimeException("User already exists");
@@ -77,6 +79,7 @@ public class InvitationServiceImpl implements InvitationService {
 
     //User setup account with token
     @Override
+    @Transactional
     public UserEntity setupAccountWithToken(String token, String password, String name) {
         Claims claims;
         try{
@@ -129,6 +132,7 @@ public class InvitationServiceImpl implements InvitationService {
 
     //Admin Resend invitation
     @Override
+    @Transactional
     public void resendInvitation(Long invitationId) {
         InvitationEntity invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(() -> new RuntimeException("invitation id not found"));
@@ -145,13 +149,13 @@ public class InvitationServiceImpl implements InvitationService {
         UserEntity currentUser = authUtil.getCurrentuser();
         logInvitationAction(invitation, "RESEND", "Resend by: " + currentUser.getName());
         String setUpUrl = String.format(URL+"/setup?token="+newToken);
-        System.out.println(setUpUrl);
         emailService.invitationEmail(invitation.getEmail(), setUpUrl, currentUser.getName(), invitation.getInvitedRole().getName());
         log.info("Invitation email sent to user");
     }
 
     //Admin Revoke invitation
     @Override
+    @Transactional
     public void revokeInvitation(Long invitationId) {
         InvitationEntity invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(() -> new RuntimeException("invitation not found"));
@@ -171,6 +175,7 @@ public class InvitationServiceImpl implements InvitationService {
 
     //Audit log
     @Override
+    @Transactional
     public void logInvitationAction(InvitationEntity invitation, String action, String details) {
         InvitationAuditLogEntity log = new InvitationAuditLogEntity();
         log.setInvitation(invitation);

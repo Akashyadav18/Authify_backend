@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherMapper teacherMapper;
 
     @Override
+    @Transactional
     public TeacherResponse createTeacher(TeacherRequest request) {
         TeacherEntity teacher = teacherMapper.convertToTeacherEntity(request);
         teacher = teacherRepository.save(teacher);
@@ -31,6 +33,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaginatedResponse<TeacherResponse> getAllTeachers(int pageNo, int pageSize, String sortBy, String sortDir, Long id, String name, String qualification, Date startDate, Date endDate) {
         Sort sort = sortDir.equalsIgnoreCase("ASC")
                 ? Sort.by(sortBy).ascending()
@@ -61,6 +64,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeacherResponse getTeacherById(Long id) {
         TeacherEntity teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
@@ -68,6 +72,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public TeacherResponse updateTeacher(Long id, TeacherRequest request) {
         TeacherEntity teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Teacher Not Found! "+id));
@@ -83,6 +88,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public void deleteTeacher(Long id) {
         TeacherEntity teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));

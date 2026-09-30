@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService{
     private final RoleRepository roleRepository;
 
     @Override
+    @Transactional
     public ProfileResponse createProfile(ProfileRequest request) {
         Role studentRole = roleRepository.findByName(ERole.STUDENT)
                 .orElseThrow(() -> new RuntimeException("Student Role not found"));
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProfileResponse getProfile(String email) {
         UserEntity existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Email not found: "+email));
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void sendResetOtp(String email) {
          UserEntity existingEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Email not found: "+email));
@@ -70,6 +74,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void resetPassword(String email, String otp, String newPassword) {
         UserEntity existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found: "+email));
@@ -88,6 +93,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void sendOtpToVerifyEmail(String email) {
         UserEntity existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found: "+email));
@@ -110,6 +116,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void verifyEmailOtp(String email, String otp) {
         UserEntity existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not Found:"+email));
@@ -127,6 +134,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLoggedInUserId(String email) {
         UserEntity existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: "+email));

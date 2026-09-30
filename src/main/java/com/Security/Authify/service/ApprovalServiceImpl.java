@@ -11,6 +11,7 @@ import com.Security.Authify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Service
@@ -23,6 +24,7 @@ public class ApprovalServiceImpl implements ApprovalService{
     private final EmailService emailService;
     private final AuthUtil authUtil;
 
+    @Transactional
     @Override
     public List<ApprovalResponse> pendingUsers() {
         List<UserEntity> pendingUsers = userRepository.findByStatus(AccountStatus.PENDING);
@@ -32,6 +34,7 @@ public class ApprovalServiceImpl implements ApprovalService{
     }
 
     @Override
+    @Transactional
     public void approveUser(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -49,6 +52,7 @@ public class ApprovalServiceImpl implements ApprovalService{
     }
 
     @Override
+    @Transactional
     public void rejectUser(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));

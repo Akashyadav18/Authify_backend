@@ -5,6 +5,7 @@ import com.Security.Authify.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,7 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
+    @Async
     public void sendWelcomeEmail(String toEmail, String name) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(fromEmail);
@@ -27,6 +29,7 @@ public class EmailService {
         mailSender.send(msg);
     }
 
+    @Async
     public void sendResetOtpEmail(String toEmail, String otp){
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(fromEmail);
@@ -36,6 +39,7 @@ public class EmailService {
         mailSender.send(msg);
     }
 
+    @Async
     public void sendOtpToVerifyEmail(String toEmail, String otp){
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(fromEmail);
@@ -45,6 +49,7 @@ public class EmailService {
         mailSender.send(msg);
     }
 
+    @Async
     public void approvalAcceptedEmailMsg(String toEmail, String name){
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(fromEmail);
@@ -54,6 +59,7 @@ public class EmailService {
         mailSender.send(msg);
     }
 
+    @Async
     public void approvalRejectedEmailMsg(String toEmail, String name){
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(fromEmail);
@@ -63,6 +69,7 @@ public class EmailService {
         mailSender.send(msg);
     }
 
+    @Async
     public void invitationEmail(String email, String url, String admin, ERole role){
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(fromEmail);

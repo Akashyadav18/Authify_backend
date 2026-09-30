@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class StudentServiceImpl implements StudentService{
     private final AuthUtil authUtil;
 
     @Override
+    @Transactional
     public StudentResponse createStudent(StudentRequest student) {
         StudentEntity stu = studentMapper.convertToStuEntity(student);
         stu = studentRepo.save(stu);
@@ -36,6 +38,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    @Transactional
     public PaginatedResponse<StudentResponse> getAllStudent(Pageable pageable, String search) {
         Specification<StudentEntity> spec = StudentSpecification.getSpecification(search);
             Page<StudentEntity> stuPage = studentRepo.findAll(spec, pageable);
@@ -47,6 +50,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public cursorPageResponse<StudentResponse> getAllStudentsCursor(Long cursor, int size) {
         Pageable pageable = PageRequest.of(0, size);
         List<StudentEntity> stuEntity = studentRepo.fetchNextPage(cursor, pageable);
@@ -60,6 +64,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public StudentResponse getStudentById(String stdId) {
         StudentEntity stuById = studentRepo.findByStdId(stdId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
@@ -67,6 +72,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    @Transactional
     public StudentResponse updateStudent(StudentRequest student, String stdId) {
         StudentEntity stud = studentRepo.findByStdId(stdId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
@@ -87,6 +93,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    @Transactional
     public void deleteStudent(String stdId) {
         StudentEntity student = studentRepo.findByStdId(stdId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
